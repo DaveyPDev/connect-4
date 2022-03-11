@@ -9,6 +9,8 @@ const WIDTH = 7;
 const HEIGHT = 6;
 
 let currPlayer = 1; // active player: 1 or 2
+let playersTurn = document.querySelector('.players-turn');
+
 let board = []; // array of rows, each row is array of cells  (board[y][x])
 
 //!    <--    Target Check    -->    //
@@ -72,24 +74,24 @@ function makeHtmlBoard () {
 
 function findSpotForCol (x) {
 	// TODO: write the real version of this, rather than always returning 0
-	//!  ** will need to come back to this and test  ** //
-	// for (let x = HEIGHT - 1; x >= 0; x--) {
-	// 	if (HEIGHT.length > 6) {
-	// 		return x;
-	// 	}
-	// }
-	// return null;
+	//!  ** will need to come back to this and rewrite  ** //
+	for (let y = HEIGHT - 1; y >= 0; y--) {
+		if (!board[y][x]) {
+			return y;
+		}
+	}
+	return null;
+}
+//   //! borrwing from solution //
+//   function findSpotForCol(x) {
+//   for (let y = HEIGHT - 1; y >= 0; y--) {
+//     if (!board[y][x]) {
+//       return y;
+//     }
+//   }
+//   return null;
+// }
 
-  //! borrwing from solution //
-  function findSpotForCol(x) {
-  for (let y = HEIGHT - 1; y >= 0; y--) {
-    if (!board[y][x]) {
-      return y;
-    }
-  }
-  return null;
-}
-}
 //#    <--    End Column    -->    //
 
 //#    <--    Start table placement  -->    //
@@ -100,18 +102,10 @@ function placeInTable (y, x) {
 	const piece = document.createElement('div');
 	piece.classList.add('piece');
 	piece.classList.add(`p${currPlayer}`);
-  //? don't get the -50 * (y - 2) //
 	piece.style.top = -50 * (y - 2);
 
-
 	const spot = document.getElementById(`${y}-${x}`);
-
-
-  //* While not everything will work, you should now be able to click on a column and see a piece appear at the very bottom of that column. (They won’t yet appear in the right row and will always be player #1 pieces) //
-    //! <--  Issue is this line --> //
-	          spot.append('piece');
-    //! <--  Issue is this line --> //
-
+	spot.append(piece);
 }
 //#    <--    End table placement    -->    //
 
@@ -120,11 +114,12 @@ function placeInTable (y, x) {
 
 function endGame (msg) {
 	// TODO: pop up alert message
-  alert(msg)
+	alert(msg);
 }
 //#    <--    End end game message    -->    //
 /** handleClick: handle click of column top to play piece */
 
+//#    <--    Start Hand Click Event    -->    //
 function handleClick (evt) {
 	// get x from ID of clicked cell
 	let x = +evt.target.id;
@@ -137,6 +132,7 @@ function handleClick (evt) {
 
 	// place piece in board and add to HTML table
 	// TODO: add line to update in-memory board
+	board[y][x] = currPlayer;
 	placeInTable(y, x);
 
 	// check for win
@@ -146,13 +142,21 @@ function handleClick (evt) {
 
 	// check for tie
 	// TODO: check if all cells in board are filled; if so call, call endGame
+  // //! Borrowed from solution, keep falling to get it to work -_-* //
+  // if (board.every(row => row.every(cell => cell))) {
+  //   return endGame('Tie!');
+  // }
+  //! Borrowed from solution, failing to work //
 
-  //#    <--    Start player switch    -->    //
-	// switch players
-	// TODO: switch currPlayer 1 <-> 2
+
+		//#    <--    Start player switch    -->    //
+		// switch players
+		// TODO: switch currPlayer 1 <-> 2
+		currPlayer = currPlayer === 1 ? 2 : 1;
+
+	//#    <--    Start player switch    -->    //
 }
-
-//#    <--    End player switch      -->    //
+//#    <--    End Hand Click Event    -->    //
 
 /** checkForWin: check board cell-by-cell for "does a win start here?" */
 
